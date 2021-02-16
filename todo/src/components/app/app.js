@@ -1,29 +1,117 @@
+import React, { Component } from 'react';
+
 import AppHeader from '../app_header/app_header';
 import SearchPanel from '../search_panel/search_panel';
 import TodoList from '../todo_list/todo_list';
 import ItemStatusFilter from '../item_status/item_status_filter';
+import ItemAddForm from '../item_add_form/item_add_form';
 
 import './app.css';
 
-const App = () => {
+export default class App extends Component {
 
-  const todoDate = [
-    { label: 'Drink Coffee', important:false, id: 1 },
-    { label: 'Make App', important:true, id: 2 },
-    { label: 'Have a lunch', important:false, id: 3 }
-  ];
-  return(
-    <div className = "todo-app">
-      <AppHeader toDo={1} done={3} />
+  maxId = 100;
 
-      <div className="top-panel d-flex">
-      <SearchPanel />
-      <ItemStatusFilter/>
+  state = {
+    todoData: [
+      this.createTodoItem('Drink Coffee'),
+      this.createTodoItem('Make Awesome App'),
+      this.createTodoItem('Have a lunch')
+    ]
+  }
+
+  createTodoItem(label) {
+    return {
+      label,
+      important: false, 
+      done: false,
+      id: this.maxId++ 
+    };
+  }
+
+  deleteItem = (id) => {
+    this.setState(( { todoData } ) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      // при таком подходе уже существующий массив меняется, что не хорошо
+      // todoData.splice(idx, 1);
+
+      const newArray = [
+        ...todoData.slice(0, idx),
+         ...todoData.slice(idx+1)
+        ];
+
+      return {
+        todoData: newArray
+      };
+    });
+  };
+
+  addItem = (text) => {
+    const newItem = this.createTodoItem(text);
+    this.setState(( { todoData } ) => {
+      const newArray = [
+        ...todoData,
+         newItem
+        ];
+
+      return {
+        todoData: newArray
+      };
+    });
+  };
+
+  toggleProperty(arr, id, propName) {
+    const idx = arr.findIndex((el) => el.id === id);
+
+    const oldItem = arr[idx];
+    const newItem = {...oldItem, 
+      [propName]: !oldItem[propName]};
+    
+    return [
+      ...arr.slice(0, idx), newItem,
+        ...arr.slice(idx+1)
+      ];
+
+  }
+
+  onToggleImportant = (id) => {
+    this.setState(({ todoData }) => {
+      return {
+      todoData: this.toggleProperty(todoData, id, 'important')
+      };
+    });
+  };
+
+  onToggleDone = (id) => {
+    this.setState(({ todoData }) => {
+      return {
+      todoData: this.toggleProperty(todoData, id, 'done')
+      };
+    });
+  };
+  
+  render(){
+
+    const { todoData } = this.state;
+
+    const doneCount = todoData.filter((el) => el.done ).length;
+    const todoCount = todoData.length - doneCount;
+    return (
+      <div className="todo-app">
+        <AppHeader toDo={todoCount} done={doneCount} />
+        <div className="top-panel d-flex">
+          <SearchPanel />
+          <ItemStatusFilter />
+        </div>
+  
+        <TodoList 
+          todos={todoData} 
+          onDeleted={ this.deleteItem }
+          onToggleImportant= { this.onToggleImportant}
+          onToggleDone={ this.onToggleDone}/>
+
+        <ItemAddForm onItemAdded={this.addItem} />
       </div>
-
-      <TodoList todos={ todoDate }/>
-  </div>
-  );
-} 
-
-export default App;
+    );
+  }
+}
