@@ -6,7 +6,7 @@ import './todo_list.css'
 const TodoList = ({ todos, onDeleted, 
   onToggleImportant, onToggleDone }) => {
 
-  const elements = todos.map((item) => {
+  const elements = todos.filter(item => item.draw_now).map((item) => {
 
     const { id, ...itemProps } = item;
 

@@ -25,7 +25,8 @@ export default class App extends Component {
       label,
       important: false, 
       done: false,
-      id: this.maxId++ 
+      id: this.maxId++,
+      draw_now: true
     };
   }
 
@@ -71,7 +72,6 @@ export default class App extends Component {
       ...arr.slice(0, idx), newItem,
         ...arr.slice(idx+1)
       ];
-
   }
 
   onToggleImportant = (id) => {
@@ -90,6 +90,19 @@ export default class App extends Component {
     });
   };
   
+  onToggleDraw = (draw_arr) => {
+    this.setState(({ todoData }) => {
+      const newTodoData = todoData.slice();
+      for (let i in newTodoData){
+        newTodoData[i].draw_now = draw_arr[i];
+      }
+
+      return {
+        todoData : newTodoData
+      };
+    });
+  };
+
   render(){
 
     const { todoData } = this.state;
@@ -101,7 +114,8 @@ export default class App extends Component {
         <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
           <SearchPanel />
-          <ItemStatusFilter />
+          <ItemStatusFilter todos={todoData}
+          onDraw={this.onToggleDraw} />
         </div>
   
         <TodoList 
