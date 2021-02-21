@@ -1,39 +1,32 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import './item_status_filter.css';
 
-export default class ItemStatusFilter extends Component {
+const filterButtons = [
+  { name: 'all', label: 'All' },
+  { name: 'active', label: 'Active' },
+  { name: 'done', label: 'Done' }
+];
 
-  onDoneButtonClicked = () => {
-    const done_data = this.props.todos.map(item => item.done);
-    this.props.onDraw(done_data);
-  }
+const ItemStatusFilter = ({filter, onFilterChange = () => {}}) => {
 
-  onActiveButtonClicked = () => {
-    const done_data = this.props.todos.map(item => !item.done);
-    this.props.onDraw(done_data);
-  }
+  const buttons = filterButtons.map(({name, label}) => {
+    const isActive = name === filter;
+    const classNames = 'btn ' + (isActive ? 'btn-info' : 'btn-outline-secondary');
 
-  onAllButtonClicked = () => {
-    const done_data = this.props.todos.map(item => true);
-    this.props.onDraw(done_data);
-  }
-
-  render() {
     return (
-      <div className="btn-group">
-        <button type="button"
-                className="btn btn-info"
-                onClick={this.onAllButtonClicked}>All</button>
-        <button type="button"
-                className="btn btn-outline-secondary"
-                onClick={this.onActiveButtonClicked}>
-                Active</button>
-        <button type="button"
-                className="btn btn-outline-secondary"
-                onClick={this.onDoneButtonClicked}>
-                Done</button>
-      </div>
+      <button key={name}
+              type="button"
+              onClick={() => onFilterChange(name)}
+              className={classNames}>{label}</button>
     );
-  }
-}
+  });
+
+  return (
+    <div className="btn-group">
+      { buttons }
+    </div>
+  );
+};
+
+export default ItemStatusFilter;
