@@ -113,7 +113,8 @@ export default class App extends Component {
       <div className="todo-app">
         <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
-          <SearchPanel />
+          <SearchPanel todos={todoData} 
+          onDraw={this.onToggleDraw}/>
           <ItemStatusFilter todos={todoData}
           onDraw={this.onToggleDraw} />
         </div>

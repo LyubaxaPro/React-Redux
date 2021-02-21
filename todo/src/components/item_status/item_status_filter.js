@@ -5,21 +5,18 @@ import './item_status_filter.css';
 export default class ItemStatusFilter extends Component {
 
   onDoneButtonClicked = () => {
-    const {todos, onDraw } = this.props;
-    const done_data = todos.map(item => item.done);
-    onDraw(done_data);
+    const done_data = this.props.todos.map(item => item.done);
+    this.props.onDraw(done_data);
   }
 
   onActiveButtonClicked = () => {
-    const {todos, onDraw } = this.props;
-    const done_data = todos.map(item => !item.done);
-    onDraw(done_data);
+    const done_data = this.props.todos.map(item => !item.done);
+    this.props.onDraw(done_data);
   }
 
   onAllButtonClicked = () => {
-    const {todos, onDraw } = this.props;
-    const done_data = todos.map(item => true);
-    onDraw(done_data);
+    const done_data = this.props.todos.map(item => true);
+    this.props.onDraw(done_data);
   }
 
   render() {
